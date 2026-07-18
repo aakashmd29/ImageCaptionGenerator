@@ -1,6 +1,7 @@
 import numpy as np
+import torch
 from PIL import Image
-from transformers import AutoProcessor, BlipForConditionalGeneration
+from transformers import AutoProcessor, BlipForConditionalGeneration, BlipForQuestionAnswering
 
 # --------------------------------------------------
 # Load the model once during application startup
@@ -27,6 +28,9 @@ def generate_caption(image: np.ndarray) -> str:
         Generated image caption.
     """
 
+    if image is None:
+        return "Please upload an image."
+    
     # Convert NumPy array -> PIL Image
     pil_image = Image.fromarray(image).convert("RGB")
 
@@ -37,12 +41,13 @@ def generate_caption(image: np.ndarray) -> str:
     )
 
     # Generate caption
-    outputs = model.generate(
-        **inputs,
-        max_length=50,
-        num_beams=5,
-        early_stopping=True
-    )
+    with torch.inference_mode():
+        outputs = model.generate(
+            **inputs,
+            max_length=50,
+            num_beams=5,
+            early_stopping=True
+        )
 
     # Decode prediction
     caption = processor.decode(

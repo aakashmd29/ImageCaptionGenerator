@@ -11,4 +11,3 @@ gradio_interface = gr.Interface(
 )
 
 gradio_interface.launch()
-
