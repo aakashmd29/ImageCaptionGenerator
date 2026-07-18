@@ -34,9 +34,15 @@ def generate_caption(image: np.ndarray) -> str:
     # Convert NumPy array -> PIL Image
     pil_image = Image.fromarray(image).convert("RGB")
 
+    return generate_caption_for_pil_image(pil_image)
+
+def generate_caption_for_pil_image(image):
+    if image is None:
+        return "Please upload an image."
+
     # Preprocess the image
     inputs = processor(
-        images=pil_image,
+        images=image,
         return_tensors="pt"
     )
 
